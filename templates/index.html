@@ -3,21 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="EduGenie — Google Gemini Powered Academic Learning Assistant for Questions, Concept Explanations, Practice Quizzes, Summaries, and Learning Paths.">
-    <title>EduGenie — AI Learning Assistant</title>
-    <!-- Google Fonts -->
+    <meta name="description" content="EduGenie — A calm, focused, AI-powered learning workspace for questions, concept breakdowns, practice quizzes, note summaries, and study plans.">
+    <title>EduGenie — Student Learning Workspace</title>
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-    <!-- Top Header -->
-    <header class="app-header">
-        <div class="header-container">
-            <div class="brand">
-                <div class="logo-icon" aria-hidden="true">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <div class="app-shell">
+        <!-- Sidebar Navigation (Desktop) -->
+        <aside class="app-sidebar" aria-label="Main Navigation">
+            <div class="sidebar-brand">
+                <div class="brand-logo-mark" aria-hidden="true">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"></path>
                         <path d="M6 6h10"></path>
                         <path d="M6 10h10"></path>
@@ -26,267 +26,302 @@
                         <path d="m21 19-1.5-1.5"></path>
                     </svg>
                 </div>
-                <div class="brand-text">
-                    <h1>EduGenie</h1>
-                    <span class="brand-tagline">AI Powered Learning Assistant</span>
+                <div class="brand-info">
+                    <span class="brand-name">EduGenie</span>
+                    <span class="brand-subtitle">Your learning companion</span>
                 </div>
             </div>
 
-            <div class="header-status">
-                <span id="config-status-badge" class="status-pill {% if gemini_configured %}status-active{% else %}status-warning{% endif %}">
+            <!-- Navigation Items -->
+            <nav class="sidebar-nav" role="tablist" aria-label="Learning Tools">
+                <button type="button" class="nav-item active" data-feature="qa" id="tab-qa" role="tab" aria-selected="true" aria-controls="panel-qa">
+                    <span class="nav-icon" aria-hidden="true">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                    </span>
+                    <span class="nav-text">Ask a Question</span>
+                </button>
+
+                <button type="button" class="nav-item" data-feature="explain" id="tab-explain" role="tab" aria-selected="false" aria-controls="panel-explain">
+                    <span class="nav-icon" aria-hidden="true">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>
+                    </span>
+                    <span class="nav-text">Explain a Concept</span>
+                </button>
+
+                <button type="button" class="nav-item" data-feature="quiz" id="tab-quiz" role="tab" aria-selected="false" aria-controls="panel-quiz">
+                    <span class="nav-icon" aria-hidden="true">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 11 3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                    </span>
+                    <span class="nav-text">Practice Quiz</span>
+                </button>
+
+                <button type="button" class="nav-item" data-feature="summarize" id="tab-summarize" role="tab" aria-selected="false" aria-controls="panel-summarize">
+                    <span class="nav-icon" aria-hidden="true">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                    </span>
+                    <span class="nav-text">Summarize Notes</span>
+                </button>
+
+                <button type="button" class="nav-item" data-feature="learning_path" id="tab-learning_path" role="tab" aria-selected="false" aria-controls="panel-learning_path">
+                    <span class="nav-icon" aria-hidden="true">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+                    </span>
+                    <span class="nav-text">Learning Plan</span>
+                </button>
+            </nav>
+
+            <!-- Sidebar Status Footer -->
+            <div class="sidebar-footer">
+                <div class="status-indicator-badge {% if gemini_configured %}status-ok{% else %}status-pending{% endif %}">
                     <span class="status-dot"></span>
-                    {% if gemini_configured %}Gemini Configured{% else %}API Key Needed in .env{% endif %}
-                </span>
-                <span class="status-pill status-info" id="provider-badge" title="Explanation Provider">
-                    Provider: {{ explanation_provider | upper }}
-                </span>
+                    <span class="status-label-text">
+                        {% if gemini_configured %}AI Connected{% else %}Add Key to .env{% endif %}
+                    </span>
+                </div>
+                <div class="provider-pill" title="Explanation Provider Mode">
+                    Mode: {{ explanation_provider | upper }}
+                </div>
             </div>
+        </aside>
+
+        <!-- Main Workspace Area -->
+        <div class="workspace-layout">
+            <!-- Workspace Top Bar -->
+            <header class="workspace-header">
+                <div class="header-titles">
+                    <h1 id="active-tool-title">Ask a Question</h1>
+                    <p id="active-tool-desc">Find clarity, one question at a time.</p>
+                </div>
+            </header>
+
+            <!-- Mobile Navigation Bar -->
+            <nav class="mobile-nav" aria-label="Mobile Tools Navigation">
+                <button type="button" class="mobile-nav-tab active" data-feature="qa">Question</button>
+                <button type="button" class="mobile-nav-tab" data-feature="explain">Explain</button>
+                <button type="button" class="mobile-nav-tab" data-feature="quiz">Quiz</button>
+                <button type="button" class="mobile-nav-tab" data-feature="summarize">Summarize</button>
+                <button type="button" class="mobile-nav-tab" data-feature="learning_path">Plan</button>
+            </nav>
+
+            <!-- Side-by-Side Workspace Grid -->
+            <main class="workspace-grid" id="main-content">
+                <!-- Left Panel: Input Form -->
+                <section class="panel input-panel" aria-labelledby="input-panel-label">
+                    <div class="panel-header">
+                        <h2 id="input-panel-label" class="panel-title">Enter Details</h2>
+                        <button type="button" class="btn btn-subtle btn-sm" id="btn-load-example" title="Fill form with a sample topic">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 12-8.5 8.5c-.83.83-2.17.83-3 0 0 0 0 0 0 0a2.12 2.12 0 0 1 0-3L12 9"/><path d="M17.64 4.36a9 9 0 0 1 2 2"/><path d="m14 2 8 8"/></svg>
+                            Try an example
+                        </button>
+                    </div>
+
+                    <form id="workspace-form" novalidate>
+                        <!-- Form 1: Q&A -->
+                        <div class="form-section" id="form-section-qa">
+                            <div class="form-field">
+                                <label for="qa-question" class="field-label">Your Academic Question <span class="req">*</span></label>
+                                <textarea id="qa-question" class="field-input" rows="5" placeholder="e.g., Which is the largest ocean on Earth and how do deep ocean currents regulate global climate?" required maxlength="1000"></textarea>
+                                <div class="field-meta">
+                                    <span class="char-count" id="qa-counter">0 / 1000</span>
+                                </div>
+                            </div>
+
+                            <div class="form-field">
+                                <label for="qa-level" class="field-label">Comprehension Level</label>
+                                <select id="qa-level" class="field-select">
+                                    <option value="beginner">Beginner (Everyday analogies)</option>
+                                    <option value="intermediate" selected>Intermediate (Standard academic)</option>
+                                    <option value="advanced">Advanced (Technical & in-depth)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Form 2: Explain a Concept -->
+                        <div class="form-section hidden" id="form-section-explain">
+                            <div class="form-field">
+                                <label for="explain-topic" class="field-label">Topic or Concept to Explain <span class="req">*</span></label>
+                                <input type="text" id="explain-topic" class="field-input" placeholder="e.g., Pythagorean theorem" required maxlength="500">
+                            </div>
+
+                            <div class="form-field">
+                                <label for="explain-level" class="field-label">Target Level</label>
+                                <select id="explain-level" class="field-select">
+                                    <option value="beginner" selected>Beginner (Simple & intuitive)</option>
+                                    <option value="intermediate">Intermediate (High school / College)</option>
+                                    <option value="advanced">Advanced (Rigorous theoretical)</option>
+                                </select>
+                            </div>
+
+                            <div class="field-hint-box">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                                <span>Explanation provider: <strong>{{ explanation_provider }}</strong></span>
+                            </div>
+                        </div>
+
+                        <!-- Form 3: Practice Quiz -->
+                        <div class="form-section hidden" id="form-section-quiz">
+                            <div class="form-field">
+                                <label for="quiz-topic" class="field-label">Quiz Topic or Study Passage <span class="req">*</span></label>
+                                <textarea id="quiz-topic" class="field-input" rows="5" placeholder="e.g., Photosynthesis and cellular respiration in plant biology" required maxlength="3000"></textarea>
+                            </div>
+
+                            <div class="form-field">
+                                <label for="quiz-difficulty" class="field-label">Quiz Difficulty</label>
+                                <select id="quiz-difficulty" class="field-select">
+                                    <option value="beginner">Beginner</option>
+                                    <option value="intermediate" selected>Intermediate</option>
+                                    <option value="advanced">Advanced</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Form 4: Summarize Notes -->
+                        <div class="form-section hidden" id="form-section-summarize">
+                            <div class="form-field">
+                                <label for="summarize-passage" class="field-label">Study Notes or Passage <span class="req">*</span></label>
+                                <textarea id="summarize-passage" class="field-input" rows="7" placeholder="Paste your study article, lecture notes, or textbook excerpt here (up to 2,500 words)..." required></textarea>
+                                <div class="field-meta">
+                                    <span class="char-count" id="summary-word-count">0 words</span>
+                                </div>
+                            </div>
+
+                            <div class="form-grid-2">
+                                <div class="form-field">
+                                    <label for="summarize-length" class="field-label">Summary Length</label>
+                                    <select id="summarize-length" class="field-select">
+                                        <option value="short">Short (Core takeaway)</option>
+                                        <option value="medium" selected>Medium (Balanced)</option>
+                                        <option value="detailed">Detailed (Thorough)</option>
+                                    </select>
+                                </div>
+                                <div class="form-field">
+                                    <label for="summarize-format" class="field-label">Format</label>
+                                    <select id="summarize-format" class="field-select">
+                                        <option value="paragraph" selected>Paragraphs</option>
+                                        <option value="bullet_points">Bullet Points</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Form 5: Learning Plan -->
+                        <div class="form-section hidden" id="form-section-learning_path">
+                            <div class="form-field">
+                                <label for="lp-topic" class="field-label">Subject or Skill <span class="req">*</span></label>
+                                <input type="text" id="lp-topic" class="field-input" placeholder="e.g., Python for Data Science" required maxlength="500">
+                            </div>
+
+                            <div class="form-field">
+                                <label for="lp-goal" class="field-label">Primary Learning Goal <span class="req">*</span></label>
+                                <input type="text" id="lp-goal" class="field-input" placeholder="e.g., Build data analysis pipelines and visualize insights" required maxlength="500">
+                            </div>
+
+                            <div class="form-grid-2">
+                                <div class="form-field">
+                                    <label for="lp-level" class="field-label">Current Level</label>
+                                    <select id="lp-level" class="field-select">
+                                        <option value="beginner" selected>Beginner (Starting fresh)</option>
+                                        <option value="intermediate">Intermediate (Basics known)</option>
+                                        <option value="advanced">Advanced (Deepening mastery)</option>
+                                    </select>
+                                </div>
+                                <div class="form-field">
+                                    <label for="lp-duration" class="field-label">Timeline (Weeks)</label>
+                                    <select id="lp-duration" class="field-select">
+                                        <option value="2">2 Weeks</option>
+                                        <option value="4" selected>4 Weeks</option>
+                                        <option value="8">8 Weeks</option>
+                                        <option value="12">12 Weeks</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-field">
+                                <label for="lp-time" class="field-label">Daily Available Study Time</label>
+                                <input type="text" id="lp-time" class="field-input" placeholder="e.g., 45 minutes / day" value="45 minutes / day" required maxlength="100">
+                            </div>
+                        </div>
+
+                        <!-- Actions Row -->
+                        <div class="form-actions-row">
+                            <button type="submit" class="btn btn-primary" id="btn-submit">
+                                <span class="btn-text">Get Answer</span>
+                                <span class="spinner hidden" id="btn-spinner" aria-hidden="true"></span>
+                            </button>
+                            <button type="button" class="btn btn-secondary" id="btn-clear">
+                                Clear
+                            </button>
+                        </div>
+                    </form>
+                </section>
+
+                <!-- Right Panel: Results & Interactive Workspace -->
+                <section class="panel result-panel" aria-labelledby="result-panel-label">
+                    <div class="panel-header">
+                        <h2 id="result-panel-label" class="panel-title">Response & Learning Insights</h2>
+                        <div class="panel-header-actions hidden" id="result-action-bar">
+                            <button type="button" class="btn btn-subtle btn-sm" id="btn-copy-result" title="Copy text to clipboard">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+                                Copy
+                            </button>
+                            <button type="button" class="btn btn-subtle btn-sm" id="btn-download-result" title="Download text report">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                Download .txt
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="result-viewport" id="result-viewport">
+                        <!-- State 1: Empty State -->
+                        <div class="empty-state" id="state-empty">
+                            <div class="empty-icon-wrapper" aria-hidden="true">
+                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="empty-heading">Ready to Learn</h3>
+                            <p class="empty-text">Enter your details on the left or select <strong>"Try an example"</strong> to generate your response.</p>
+                        </div>
+
+                        <!-- State 2: Loading State -->
+                        <div class="loading-state hidden" id="state-loading" aria-live="polite">
+                            <div class="loading-spinner"></div>
+                            <h3 class="loading-heading" id="loading-title">Generating your answer...</h3>
+                            <p class="loading-subtext" id="loading-subtitle">Structuring educational insights and explanations.</p>
+                        </div>
+
+                        <!-- State 3: Error State -->
+                        <div class="error-state hidden" id="state-error" role="alert">
+                            <div class="error-icon" aria-hidden="true">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                            </div>
+                            <div class="error-content">
+                                <h3 class="error-heading" id="error-title">Request Issue</h3>
+                                <p class="error-message" id="error-message">Unable to complete request.</p>
+                                <div class="error-meta-box hidden" id="error-details-box">
+                                    <code></code>
+                                </div>
+                                <button type="button" class="btn btn-secondary btn-sm" id="btn-dismiss-error">Dismiss</button>
+                            </div>
+                        </div>
+
+                        <!-- State 4: Dynamic Result Content Area -->
+                        <div class="result-content hidden" id="state-content">
+                            <!-- Populated dynamically via app.js -->
+                        </div>
+                    </div>
+                </section>
+            </main>
+
+            <!-- Bottom Disclaimer -->
+            <footer class="workspace-footer">
+                <p>EduGenie provides AI-assisted academic guidance. Please verify critical concepts with your primary textbooks and coursework.</p>
+            </footer>
         </div>
-    </header>
+    </div>
 
-    <!-- Main Container -->
-    <main class="main-container">
-        <!-- Intro Hero -->
-        <section class="intro-section">
-            <h2>Accelerate Your Academic Journey</h2>
-            <p>Select an academic tool below to ask questions, break down complex concepts, practice with quizzes, summarize study materials, or build a custom learning curriculum.</p>
-        </section>
-
-        <!-- Feature Navigation Tabs -->
-        <nav class="feature-nav" aria-label="Learning Tools Navigation">
-            <button class="nav-tab active" data-feature="qa" id="tab-qa" aria-controls="panel-qa" aria-selected="true" role="tab">
-                <span class="tab-icon" aria-hidden="true">💬</span>
-                <span class="tab-label">Ask Question</span>
-            </button>
-            <button class="nav-tab" data-feature="explain" id="tab-explain" aria-controls="panel-explain" aria-selected="false" role="tab">
-                <span class="tab-icon" aria-hidden="true">💡</span>
-                <span class="tab-label">Explain Concept</span>
-            </button>
-            <button class="nav-tab" data-feature="quiz" id="tab-quiz" aria-controls="panel-quiz" aria-selected="false" role="tab">
-                <span class="tab-icon" aria-hidden="true">📝</span>
-                <span class="tab-label">Practice Quiz</span>
-            </button>
-            <button class="nav-tab" data-feature="summarize" id="tab-summarize" aria-controls="panel-summarize" aria-selected="false" role="tab">
-                <span class="tab-icon" aria-hidden="true">📄</span>
-                <span class="tab-label">Summarize</span>
-            </button>
-            <button class="nav-tab" data-feature="learning_path" id="tab-learning_path" aria-controls="panel-learning_path" aria-selected="false" role="tab">
-                <span class="tab-icon" aria-hidden="true">🗺️</span>
-                <span class="tab-label">Learning Path</span>
-            </button>
-        </nav>
-
-        <!-- Workspace Grid: Input Form + Result Panel -->
-        <div class="workspace-grid">
-            <!-- Left Panel: Dynamic Input Forms -->
-            <section class="card input-card" aria-labelledby="input-panel-heading">
-                <div class="card-header">
-                    <h3 id="input-panel-heading">Configure Request</h3>
-                    <button type="button" class="btn btn-secondary btn-sm" id="btn-load-example">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 12-8.5 8.5c-.83.83-2.17.83-3 0 0 0 0 0 0 0a2.12 2.12 0 0 1 0-3L12 9"/><path d="M17.64 4.36a9 9 0 0 1 2 2"/><path d="m14 2 8 8"/></svg>
-                        Try an example
-                    </button>
-                </div>
-
-                <form id="feature-form" novalidate>
-                    <!-- 1. QA Form -->
-                    <div class="form-group-section" id="form-section-qa">
-                        <label for="qa-question" class="form-label">Academic Question <span class="required-star">*</span></label>
-                        <textarea id="qa-question" class="form-control" rows="4" placeholder="e.g., Which is the largest ocean and what are its major ocean currents?" required maxlength="1000"></textarea>
-                        <div class="input-meta">
-                            <span class="char-counter" id="qa-counter">0 / 1000</span>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="qa-level" class="form-label">Comprehension Level</label>
-                            <select id="qa-level" class="form-select">
-                                <option value="beginner">Beginner (Simple & Intuitive)</option>
-                                <option value="intermediate" selected>Intermediate (Standard Academic)</option>
-                                <option value="advanced">Advanced (Rigorous & In-Depth)</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- 2. Explain Form -->
-                    <div class="form-group-section hidden" id="form-section-explain">
-                        <label for="explain-topic" class="form-label">Topic or Concept to Explain <span class="required-star">*</span></label>
-                        <input type="text" id="explain-topic" class="form-control" placeholder="e.g., Pythagorean theorem" required maxlength="500">
-                        
-                        <div class="form-group">
-                            <label for="explain-level" class="form-label">Target Learner Level</label>
-                            <select id="explain-level" class="form-select">
-                                <option value="beginner" selected>Beginner (Everyday analogies)</option>
-                                <option value="intermediate">Intermediate (High school / College)</option>
-                                <option value="advanced">Advanced (Technical & Formal)</option>
-                            </select>
-                        </div>
-
-                        <div class="info-callout">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-                            <span>Provider: <strong>{{ explanation_provider }}</strong> mode (configurable in .env).</span>
-                        </div>
-                    </div>
-
-                    <!-- 3. Quiz Form -->
-                    <div class="form-group-section hidden" id="form-section-quiz">
-                        <label for="quiz-topic" class="form-label">Quiz Topic or Passage <span class="required-star">*</span></label>
-                        <textarea id="quiz-topic" class="form-control" rows="4" placeholder="e.g., Photosynthesis and cellular respiration in plant biology" required maxlength="3000"></textarea>
-
-                        <div class="form-group">
-                            <label for="quiz-difficulty" class="form-label">Quiz Difficulty</label>
-                            <select id="quiz-difficulty" class="form-select">
-                                <option value="beginner">Beginner</option>
-                                <option value="intermediate" selected>Intermediate</option>
-                                <option value="advanced">Advanced</option>
-                            </select>
-                        </div>
-                        <p class="form-hint">Generates exactly 3 interactive multiple-choice practice questions with instant scoring.</p>
-                    </div>
-
-                    <!-- 4. Summarize Form -->
-                    <div class="form-group-section hidden" id="form-section-summarize">
-                        <label for="summarize-passage" class="form-label">Educational Passage to Summarize <span class="required-star">*</span></label>
-                        <textarea id="summarize-passage" class="form-control" rows="6" placeholder="Paste your study article, lecture notes, or textbook excerpt here (up to 2,500 words)..." required></textarea>
-                        <div class="input-meta">
-                            <span class="word-counter" id="summary-word-count">0 words</span>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group col">
-                                <label for="summarize-length" class="form-label">Summary Length</label>
-                                <select id="summarize-length" class="form-select">
-                                    <option value="short">Short (Core takeaway)</option>
-                                    <option value="medium" selected>Medium (Balanced)</option>
-                                    <option value="detailed">Detailed (Thorough)</option>
-                                </select>
-                            </div>
-                            <div class="form-group col">
-                                <label for="summarize-format" class="form-label">Output Format</label>
-                                <select id="summarize-format" class="form-select">
-                                    <option value="paragraph" selected>Structured Paragraphs</option>
-                                    <option value="bullet_points">Bullet Points</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 5. Learning Path Form -->
-                    <div class="form-group-section hidden" id="form-section-learning_path">
-                        <label for="lp-topic" class="form-label">Subject or Skill <span class="required-star">*</span></label>
-                        <input type="text" id="lp-topic" class="form-control" placeholder="e.g., Python for Data Science" required maxlength="500">
-
-                        <div class="form-group">
-                            <label for="lp-goal" class="form-label">Learning Goal <span class="required-star">*</span></label>
-                            <input type="text" id="lp-goal" class="form-control" placeholder="e.g., Build data analysis pipelines and visualize insights" required maxlength="500">
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group col">
-                                <label for="lp-level" class="form-label">Current Level</label>
-                                <select id="lp-level" class="form-select">
-                                    <option value="beginner" selected>Beginner (Starting from scratch)</option>
-                                    <option value="intermediate">Intermediate (Some basics known)</option>
-                                    <option value="advanced">Advanced (Deepening mastery)</option>
-                                </select>
-                            </div>
-                            <div class="form-group col">
-                                <label for="lp-duration" class="form-label">Duration (Weeks)</label>
-                                <select id="lp-duration" class="form-select">
-                                    <option value="2">2 Weeks (Sprint)</option>
-                                    <option value="4" selected>4 Weeks (Standard)</option>
-                                    <option value="8">8 Weeks (In-depth)</option>
-                                    <option value="12">12 Weeks (Comprehensive)</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="lp-time" class="form-label">Daily Available Study Time</label>
-                            <input type="text" id="lp-time" class="form-control" placeholder="e.g., 45 minutes / day" value="45 minutes / day" required maxlength="100">
-                        </div>
-                    </div>
-
-                    <!-- Action Buttons -->
-                    <div class="form-actions">
-                        <button type="submit" class="btn btn-primary" id="btn-submit">
-                            <span class="btn-text">Generate Answer</span>
-                            <span class="spinner hidden" id="submit-spinner" aria-hidden="true"></span>
-                        </button>
-                        <button type="button" class="btn btn-ghost" id="btn-clear">
-                            Clear
-                        </button>
-                    </div>
-                </form>
-            </section>
-
-            <!-- Right Panel: Results & Interactive Display -->
-            <section class="card result-card" aria-labelledby="result-panel-heading">
-                <div class="card-header">
-                    <h3 id="result-panel-heading">Output & Insights</h3>
-                    <div class="result-actions hidden" id="result-action-bar">
-                        <button type="button" class="btn btn-secondary btn-sm" id="btn-copy-result" title="Copy result to clipboard">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
-                            Copy
-                        </button>
-                        <button type="button" class="btn btn-secondary btn-sm" id="btn-download-result" title="Download as text file">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                            Download .txt
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Result Container States -->
-                <div class="result-body" id="result-body">
-                    <!-- State 1: Empty State -->
-                    <div class="state-empty" id="state-empty">
-                        <div class="empty-illustration">
-                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <path d="M12 16v-4"></path>
-                                <path d="M12 8h.01"></path>
-                            </svg>
-                        </div>
-                        <h4>Ready When You Are</h4>
-                        <p>Fill in the form on the left or click <strong>"Try an example"</strong> to start generating answers, quizzes, explanations, and learning paths.</p>
-                    </div>
-
-                    <!-- State 2: Loading State -->
-                    <div class="state-loading hidden" id="state-loading" aria-live="polite">
-                        <div class="loading-spinner-large"></div>
-                        <h4 id="loading-title">EduGenie is thinking...</h4>
-                        <p id="loading-subtitle">Synthesizing educational insights and formatting response.</p>
-                    </div>
-
-                    <!-- State 3: Error State -->
-                    <div class="state-error hidden" id="state-error" role="alert">
-                        <div class="error-badge">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                        </div>
-                        <h4 id="error-title">Request Encountered an Issue</h4>
-                        <p id="error-message">Error details will appear here.</p>
-                        <div class="error-details-box hidden" id="error-details-box">
-                            <code></code>
-                        </div>
-                        <div class="error-action-row">
-                            <button type="button" class="btn btn-secondary btn-sm" id="btn-dismiss-error">Dismiss</button>
-                        </div>
-                    </div>
-
-                    <!-- State 4: Dynamic Success Content Rendered Here -->
-                    <div class="state-content hidden" id="state-content">
-                        <!-- Rendered via app.js -->
-                    </div>
-                </div>
-            </section>
-        </div>
-
-        <!-- Academic Disclaimer -->
-        <footer class="app-footer">
-            <p><strong>Educational Disclaimer:</strong> EduGenie utilizes AI models for academic assistance. AI-generated explanations and study plans are recommendations and should be cross-referenced with primary course materials.</p>
-        </footer>
-    </main>
-
-    <!-- Toast Notification for Copy feedback -->
+    <!-- Toast Confirmation -->
     <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
 
     <script src="/static/app.js"></script>

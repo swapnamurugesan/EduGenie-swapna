@@ -11,7 +11,7 @@ def test_home_page_renders_html(client: TestClient):
     assert response.status_code == 200
     assert "text/html" in response.headers["content-type"]
     assert "EduGenie" in response.text
-    assert "Ask Question" in response.text
+    assert "Ask a Question" in response.text
     assert "Practice Quiz" in response.text
 
 
