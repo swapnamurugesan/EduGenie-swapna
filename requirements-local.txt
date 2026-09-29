@@ -1,0 +1,6 @@
+# Dependencies for local transformer model execution (MBZUAI/LaMini-Flan-T5-783M)
+-r requirements.txt
+torch>=2.2.0
+transformers>=4.40.0
+sentencepiece>=0.2.0
+accelerate>=0.29.0
