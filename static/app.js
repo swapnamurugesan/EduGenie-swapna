@@ -1,6 +1,6 @@
 /**
- * EduGenie — Redesigned Learning Workspace Application Logic
- * Vanilla JavaScript implementation for student-friendly academic tooling.
+ * EduGenie — Ultra-Modern Learning Workspace Controller
+ * Features showcase carousel synchronization, metrics grid, request race-protection, and safe DOM construction.
  */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -13,6 +13,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // Feature Metadata Configuration
     const TOOL_META = {
         qa: {
+            index: 0,
+            tag: "001 • ASK A QUESTION",
             title: "Ask a Question",
             desc: "Find clarity, one question at a time.",
             submitLabel: "Get Answer",
@@ -20,6 +22,8 @@ document.addEventListener("DOMContentLoaded", () => {
             loadingSubtitle: "Synthesizing educational insights and practical examples.",
         },
         explain: {
+            index: 1,
+            tag: "002 • CONCEPT EXPLANATION",
             title: "Explain a Concept",
             desc: "Make difficult ideas easier to understand.",
             submitLabel: "Explain Simply",
@@ -27,6 +31,8 @@ document.addEventListener("DOMContentLoaded", () => {
             loadingSubtitle: "Breaking down the concept with intuitive analogies.",
         },
         quiz: {
+            index: 2,
+            tag: "003 • PRACTICE QUIZ",
             title: "Practice Quiz",
             desc: "Check what you know.",
             submitLabel: "Generate 3 Questions",
@@ -34,6 +40,8 @@ document.addEventListener("DOMContentLoaded", () => {
             loadingSubtitle: "Creating 3 multiple-choice questions with answer keys.",
         },
         summarize: {
+            index: 3,
+            tag: "004 • NOTE SUMMARIZER",
             title: "Summarize Notes",
             desc: "Turn long notes into clear takeaways.",
             submitLabel: "Summarize Notes",
@@ -41,6 +49,8 @@ document.addEventListener("DOMContentLoaded", () => {
             loadingSubtitle: "Condensing facts while faithfully preserving key ideas.",
         },
         learning_path: {
+            index: 4,
+            tag: "005 • LEARNING ROADMAP",
             title: "Learning Plan",
             desc: "Build a practical path toward your goal.",
             submitLabel: "Create My Plan",
@@ -78,9 +88,10 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     // DOM Elements
-    const sidebarNavTabs = document.querySelectorAll(".sidebar-nav .nav-item");
-    const mobileNavTabs = document.querySelectorAll(".mobile-nav .mobile-nav-tab");
+    const toolTabs = document.querySelectorAll(".tool-carousel-nav .tool-tab");
+    const carouselDots = document.querySelectorAll(".carousel-dots-row .c-dot");
 
+    const heroTagText = document.getElementById("hero-tag-text");
     const activeToolTitle = document.getElementById("active-tool-title");
     const activeToolDesc = document.getElementById("active-tool-desc");
 
@@ -118,7 +129,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const btnDownloadResult = document.getElementById("btn-download-result");
     const toast = document.getElementById("toast");
 
-    // Live Counters
+    // Live Field Counters
     const qaQuestion = document.getElementById("qa-question");
     const qaCounter = document.getElementById("qa-counter");
     if (qaQuestion && qaCounter) {
@@ -145,22 +156,22 @@ document.addEventListener("DOMContentLoaded", () => {
         activeFeature = feature;
         const meta = TOOL_META[feature] || TOOL_META.qa;
 
-        // Update Header Titles
+        // Update Showcase Titles
+        if (heroTagText) heroTagText.textContent = meta.tag;
         activeToolTitle.textContent = meta.title;
         activeToolDesc.textContent = meta.desc;
         btnSubmitText.textContent = meta.submitLabel;
 
-        // Update Desktop Sidebar active states
-        sidebarNavTabs.forEach((tab) => {
+        // Update Carousel Tool Tabs
+        toolTabs.forEach((tab) => {
             const isActive = tab.getAttribute("data-feature") === feature;
             tab.classList.toggle("active", isActive);
             tab.setAttribute("aria-selected", isActive ? "true" : "false");
         });
 
-        // Update Mobile Nav active states
-        mobileNavTabs.forEach((tab) => {
-            const isActive = tab.getAttribute("data-feature") === feature;
-            tab.classList.toggle("active", isActive);
+        // Update Iridescent Pagination Dots
+        carouselDots.forEach((dot, idx) => {
+            dot.classList.toggle("active", idx === meta.index);
         });
 
         // Toggle Form Sections
@@ -170,7 +181,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
 
-        // Clear error display if any
+        // Reset Error State
         resetError();
 
         // Switch result viewport if result matches or show empty
@@ -181,14 +192,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    sidebarNavTabs.forEach((tab) => {
-        tab.addEventListener("click", () => {
-            const feature = tab.getAttribute("data-feature");
-            switchFeature(feature);
-        });
-    });
-
-    mobileNavTabs.forEach((tab) => {
+    toolTabs.forEach((tab) => {
         tab.addEventListener("click", () => {
             const feature = tab.getAttribute("data-feature");
             switchFeature(feature);
@@ -393,15 +397,15 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function renderQAResult(data) {
-        const topRow = createEl("div", "content-top-badge-row");
-        const title = createEl("h3", "content-main-title", data.question);
-        const levelBadge = createEl("span", "badge-pill", `Level: ${capitalize(data.level)}`);
+        const topRow = createEl("div", "content-top-row");
+        const title = createEl("h3", "content-title-h3", data.question);
+        const levelBadge = createEl("span", "stat-pill-badge", `Level: ${capitalize(data.level)}`);
         topRow.appendChild(title);
         topRow.appendChild(levelBadge);
 
-        const ansBlock = createEl("div", "content-block");
-        const ansHeading = createEl("div", "block-heading", "Academic Answer");
-        const ansBody = createEl("p", "body-prose", data.answer);
+        const ansBlock = createEl("div", "content-section-block");
+        const ansHeading = createEl("div", "section-label-header", "Academic Answer");
+        const ansBody = createEl("p", "prose-text-body", data.answer);
         ansBlock.appendChild(ansHeading);
         ansBlock.appendChild(ansBody);
 
@@ -409,9 +413,9 @@ document.addEventListener("DOMContentLoaded", () => {
         stateContent.appendChild(ansBlock);
 
         if (data.key_points && data.key_points.length > 0) {
-            const kpBlock = createEl("div", "content-block");
-            const kpHeading = createEl("div", "block-heading", "Key Takeaways");
-            const ul = createEl("ul", "takeaways-list");
+            const kpBlock = createEl("div", "content-section-block");
+            const kpHeading = createEl("div", "section-label-header", "Key Takeaways");
+            const ul = createEl("ul", "takeaways-clean-list");
             data.key_points.forEach((kp) => {
                 ul.appendChild(createEl("li", "", kp));
             });
@@ -421,9 +425,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         if (data.example) {
-            const exBlock = createEl("div", "content-block");
-            const exHeading = createEl("div", "block-heading", "Illustrative Example");
-            const exBox = createEl("div", "callout-example", data.example);
+            const exBlock = createEl("div", "content-section-block");
+            const exHeading = createEl("div", "section-label-header", "Illustrative Example");
+            const exBox = createEl("div", "callout-example-card", data.example);
             exBlock.appendChild(exHeading);
             exBlock.appendChild(exBox);
             stateContent.appendChild(exBlock);
@@ -431,31 +435,31 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function renderExplainResult(data) {
-        const topRow = createEl("div", "content-top-badge-row");
-        const title = createEl("h3", "content-main-title", `Concept: ${data.topic}`);
+        const topRow = createEl("div", "content-top-row");
+        const title = createEl("h3", "content-title-h3", `Concept: ${data.topic}`);
         const providerPill = createEl(
             "span",
-            "badge-pill",
+            "stat-pill-badge",
             data.provider === "local" ? "⚡ Local Model" : "✨ Google Gemini"
         );
         topRow.appendChild(title);
         topRow.appendChild(providerPill);
 
-        const expBlock = createEl("div", "content-block");
-        const expHeading = createEl("div", "block-heading", `Plain Explanation (${capitalize(data.level)})`);
-        const expBody = createEl("p", "body-prose", data.explanation);
+        const expBlock = createEl("div", "content-section-block");
+        const expHeading = createEl("div", "section-label-header", `Plain Explanation (${capitalize(data.level)})`);
+        const expBody = createEl("p", "prose-text-body", data.explanation);
         expBlock.appendChild(expHeading);
         expBlock.appendChild(expBody);
 
-        const analogyBlock = createEl("div", "content-block");
-        const analogyHeading = createEl("div", "block-heading", "Analogy / Practical Illustration");
-        const analogyBox = createEl("div", "callout-example", data.analogy_or_example);
+        const analogyBlock = createEl("div", "content-section-block");
+        const analogyHeading = createEl("div", "section-label-header", "Analogy / Practical Demonstration");
+        const analogyBox = createEl("div", "callout-example-card", data.analogy_or_example);
         analogyBlock.appendChild(analogyHeading);
         analogyBlock.appendChild(analogyBox);
 
-        const takeawayBlock = createEl("div", "content-block");
-        const takeawayHeading = createEl("div", "block-heading", "Key Takeaway");
-        const takeawayBox = createEl("div", "callout-takeaway", data.takeaway);
+        const takeawayBlock = createEl("div", "content-section-block");
+        const takeawayHeading = createEl("div", "section-label-header", "Key Takeaway");
+        const takeawayBox = createEl("div", "callout-takeaway-card", data.takeaway);
         takeawayBlock.appendChild(takeawayHeading);
         takeawayBlock.appendChild(takeawayBox);
 
@@ -466,33 +470,31 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function renderQuizResult(data) {
-        const wrapper = createEl("div", "quiz-wrapper");
+        const wrapper = createEl("div", "quiz-flow-wrapper");
 
-        const topRow = createEl("div", "content-top-badge-row");
-        const title = createEl("h3", "content-main-title", `Quiz: ${data.topic_or_passage.slice(0, 48)}...`);
-        const badge = createEl("span", "badge-pill", `${capitalize(data.difficulty)} • 3 Questions`);
+        const topRow = createEl("div", "content-top-row");
+        const title = createEl("h3", "content-title-h3", `Quiz: ${data.topic_or_passage.slice(0, 48)}...`);
+        const badge = createEl("span", "stat-pill-badge", `${capitalize(data.difficulty)} • 3 Questions`);
         topRow.appendChild(title);
         topRow.appendChild(badge);
         wrapper.appendChild(topRow);
 
-        // Score Card (Hidden until submission)
-        const scoreCard = createEl("div", "quiz-score-card hidden", "", "quiz-score-card");
-        wrapper.appendChild(scoreCard);
+        // 3-Column Stats Grid Banner for Quiz (Hidden until submission)
+        const scoreBanner = createEl("div", "metrics-tri-grid hidden", "", "quiz-score-tri-grid");
+        wrapper.appendChild(scoreBanner);
 
         // 3 Separate Question Cards
         data.questions.forEach((q, qIndex) => {
-            const card = createEl("div", "quiz-card", "", `quiz-q-card-${qIndex}`);
+            const card = createEl("div", "quiz-card-item", "", `quiz-card-item-${qIndex}`);
 
-            const head = createEl("div", "quiz-card-head");
-            const indicator = createEl("span", "quiz-q-indicator", `Question ${qIndex + 1} of 3`);
-            const prompt = createEl("h4", "quiz-q-prompt", q.question);
-            head.appendChild(indicator);
-            head.appendChild(prompt);
-            card.appendChild(head);
+            const indicator = createEl("span", "quiz-q-indicator-text", `Question ${qIndex + 1} of 3`);
+            const prompt = createEl("h4", "quiz-q-heading", q.question);
+            card.appendChild(indicator);
+            card.appendChild(prompt);
 
-            const optionsGroup = createEl("div", "quiz-options-group");
+            const optionsGroup = createEl("div", "quiz-options-vertical");
             q.options.forEach((optText, optIndex) => {
-                const label = createEl("label", "quiz-option-row", "", `label-q${qIndex}-opt${optIndex}`);
+                const label = createEl("label", "quiz-option-pill-row", "", `label-q${qIndex}-opt${optIndex}`);
                 const radio = document.createElement("input");
                 radio.type = "radio";
                 radio.name = `quiz-q-${qIndex}`;
@@ -507,19 +509,19 @@ document.addEventListener("DOMContentLoaded", () => {
             card.appendChild(optionsGroup);
 
             // Explanation Callout (Hidden until submission)
-            const expPanel = createEl("div", "quiz-explanation-panel hidden", `Explanation: ${q.explanation}`, `quiz-exp-panel-${qIndex}`);
+            const expPanel = createEl("div", "quiz-explanation-box hidden", `Explanation: ${q.explanation}`, `quiz-exp-box-${qIndex}`);
             card.appendChild(expPanel);
 
             wrapper.appendChild(card);
         });
 
         // Quiz Actions
-        const actionsRow = createEl("div", "quiz-action-bar");
-        const submitBtn = createEl("button", "btn btn-primary", "Submit Quiz Answers", "btn-submit-quiz");
+        const actionsRow = createEl("div", "quiz-actions-row");
+        const submitBtn = createEl("button", "pill-btn pill-btn-primary", "Submit Quiz Answers", "btn-submit-quiz");
         submitBtn.type = "button";
         submitBtn.addEventListener("click", () => handleQuizScoring(data));
 
-        const retryBtn = createEl("button", "btn btn-secondary hidden", "Retry Quiz", "btn-retry-quiz");
+        const retryBtn = createEl("button", "pill-btn pill-btn-outline hidden", "Retry Quiz", "btn-retry-quiz");
         retryBtn.type = "button";
         retryBtn.addEventListener("click", () => renderQuizResult(data));
 
@@ -545,7 +547,7 @@ document.addEventListener("DOMContentLoaded", () => {
         data.questions.forEach((q, i) => {
             const userChoice = answers[i];
             const correctChoice = q.correct_option_index;
-            const expPanel = document.getElementById(`quiz-exp-panel-${i}`);
+            const expPanel = document.getElementById(`quiz-exp-box-${i}`);
 
             if (expPanel) expPanel.classList.remove("hidden");
 
@@ -556,11 +558,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (optIdx === correctChoice) {
                     label.classList.add("is-correct");
-                    const badge = createEl("span", "quiz-option-badge", "✔ Correct");
+                    const badge = createEl("span", "quiz-opt-tag", "✔ Correct Answer");
                     label.appendChild(badge);
                 } else if (optIdx === userChoice && userChoice !== correctChoice) {
                     label.classList.add("is-incorrect");
-                    const badge = createEl("span", "quiz-option-badge", "✖ Your Choice");
+                    const badge = createEl("span", "quiz-opt-tag", "✖ Your Choice");
                     label.appendChild(badge);
                 }
             });
@@ -570,17 +572,24 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
 
-        // Update score banner
-        const scoreCard = document.getElementById("quiz-score-card");
-        if (scoreCard) {
-            scoreCard.classList.remove("hidden");
+        // Update 3-Column Metrics Grid for Quiz
+        const scoreBanner = document.getElementById("quiz-score-tri-grid");
+        if (scoreBanner) {
+            scoreBanner.classList.remove("hidden");
             const pct = Math.round((score / 3) * 100);
-            scoreCard.innerHTML = `
-                <div>
-                    <div class="score-title">Quiz Results</div>
-                    <div class="score-desc">Review question explanations below to reinforce your understanding.</div>
+            scoreBanner.innerHTML = `
+                <div class="metric-column">
+                    <span class="metric-large-val">${score} / 3</span>
+                    <span class="metric-label-txt">FINAL SCORE</span>
                 </div>
-                <div class="score-number">${score} / 3 (${pct}%)</div>
+                <div class="metric-column">
+                    <span class="metric-large-val">${pct}%</span>
+                    <span class="metric-label-txt">ACCURACY RATE</span>
+                </div>
+                <div class="metric-column">
+                    <span class="metric-large-val">3 of 3</span>
+                    <span class="metric-label-txt">QUESTIONS ANSWERED</span>
+                </div>
             `;
         }
 
@@ -591,39 +600,54 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function renderSummarizeResult(data) {
-        const topRow = createEl("div", "content-top-badge-row");
-        const title = createEl("h3", "content-main-title", "Summary Notes");
+        const topRow = createEl("div", "content-top-row");
+        const title = createEl("h3", "content-title-h3", "Summary Notes");
+        const formatBadge = createEl("span", "stat-pill-badge", `${capitalize(data.length)} • ${data.format.replace('_', ' ')}`);
+        topRow.appendChild(title);
+        topRow.appendChild(formatBadge);
+        stateContent.appendChild(topRow);
+
+        // 3-Column Metrics Grid (Matching Reference Image)
         const reduction = data.original_word_count > 0
             ? Math.round((1 - data.summary_word_count / data.original_word_count) * 100)
             : 0;
-        const statPill = createEl(
-            "span",
-            "badge-pill",
-            `${data.original_word_count} words → ${data.summary_word_count} words (${reduction}% reduction)`
-        );
-        topRow.appendChild(title);
-        topRow.appendChild(statPill);
 
-        const sumBlock = createEl("div", "content-block");
-        const sumHeading = createEl("div", "block-heading", `Summary (${capitalize(data.length)} • ${data.format.replace('_', ' ')})`);
-        const sumBody = createEl("div", "body-prose", data.summary);
+        const metricsGrid = createEl("div", "metrics-tri-grid");
+        metricsGrid.innerHTML = `
+            <div class="metric-column">
+                <span class="metric-large-val">-${reduction}%</span>
+                <span class="metric-label-txt">LENGTH REDUCTION</span>
+            </div>
+            <div class="metric-column">
+                <span class="metric-large-val">${data.original_word_count}</span>
+                <span class="metric-label-txt">ORIGINAL WORDS</span>
+            </div>
+            <div class="metric-column">
+                <span class="metric-large-val">${data.summary_word_count}</span>
+                <span class="metric-label-txt">SUMMARY WORDS</span>
+            </div>
+        `;
+        stateContent.appendChild(metricsGrid);
+
+        const sumBlock = createEl("div", "content-section-block");
+        const sumHeading = createEl("div", "section-label-header", "Synthesized Takeaway");
+        const sumBody = createEl("div", "prose-text-body", data.summary);
         sumBlock.appendChild(sumHeading);
         sumBlock.appendChild(sumBody);
 
-        stateContent.appendChild(topRow);
         stateContent.appendChild(sumBlock);
     }
 
     function renderLearningPathResult(data) {
-        const topRow = createEl("div", "content-top-badge-row");
-        const title = createEl("h3", "content-main-title", `Plan: ${data.topic}`);
-        const tag = createEl("span", "badge-pill", `Duration: ~${data.estimated_duration_weeks} Weeks`);
+        const topRow = createEl("div", "content-top-row");
+        const title = createEl("h3", "content-title-h3", `Plan: ${data.topic}`);
+        const tag = createEl("span", "stat-pill-badge", `Duration: ~${data.estimated_duration_weeks} Weeks`);
         topRow.appendChild(title);
         topRow.appendChild(tag);
 
-        const ovBlock = createEl("div", "content-block");
-        const ovHeading = createEl("div", "block-heading", "Curriculum Overview & Goal");
-        const ovBody = createEl("p", "body-prose", `${data.overview}\n\nPrimary Goal: ${data.goal}`);
+        const ovBlock = createEl("div", "content-section-block");
+        const ovHeading = createEl("div", "section-label-header", "Curriculum Overview & Goal");
+        const ovBody = createEl("p", "prose-text-body", `${data.overview}\n\nPrimary Goal: ${data.goal}`);
         ovBlock.appendChild(ovHeading);
         ovBlock.appendChild(ovBody);
 
@@ -632,9 +656,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Prerequisites
         if (data.prerequisites && data.prerequisites.length > 0) {
-            const preBlock = createEl("div", "content-block");
-            const preHeading = createEl("div", "block-heading", "Recommended Prerequisites");
-            const ul = createEl("ul", "takeaways-list");
+            const preBlock = createEl("div", "content-section-block");
+            const preHeading = createEl("div", "section-label-header", "Recommended Prerequisites");
+            const ul = createEl("ul", "takeaways-clean-list");
             data.prerequisites.forEach((p) => ul.appendChild(createEl("li", "", p)));
             preBlock.appendChild(preHeading);
             preBlock.appendChild(ul);
@@ -642,19 +666,19 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         // Weekly Schedule Stack
-        const scheduleBlock = createEl("div", "content-block");
-        const scheduleHeading = createEl("div", "block-heading", "Week-by-Week Curriculum");
-        const stack = createEl("div", "curriculum-stack");
+        const scheduleBlock = createEl("div", "content-section-block");
+        const scheduleHeading = createEl("div", "section-label-header", "Week-by-Week Curriculum");
+        const stack = createEl("div", "curriculum-timeline-stack");
 
         data.weekly_schedule.forEach((week) => {
-            const weekCard = createEl("div", "curriculum-week-card");
-            const wTitle = createEl("div", "week-badge-title", `Week ${week.week_number}: ${week.title}`);
+            const weekCard = createEl("div", "curriculum-week-card-box");
+            const wTitle = createEl("div", "week-title-badge", `Week ${week.week_number}: ${week.title}`);
             weekCard.appendChild(wTitle);
 
             if (week.focus_concepts && week.focus_concepts.length > 0) {
-                const cBlock = createEl("div", "week-meta-block");
-                const cLabel = createEl("span", "week-meta-label", "Core Concepts:");
-                const cList = createEl("ul", "week-item-list");
+                const cBlock = createEl("div", "week-block-section");
+                const cLabel = createEl("span", "week-micro-label", "Core Concepts:");
+                const cList = createEl("ul", "week-bullet-list");
                 week.focus_concepts.forEach((c) => cList.appendChild(createEl("li", "", c)));
                 cBlock.appendChild(cLabel);
                 cBlock.appendChild(cList);
@@ -662,9 +686,9 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             if (week.practice_activities && week.practice_activities.length > 0) {
-                const aBlock = createEl("div", "week-meta-block");
-                const aLabel = createEl("span", "week-meta-label", "Practice Activities:");
-                const aList = createEl("ul", "week-item-list");
+                const aBlock = createEl("div", "week-block-section");
+                const aLabel = createEl("span", "week-micro-label", "Practice Activities:");
+                const aList = createEl("ul", "week-bullet-list");
                 week.practice_activities.forEach((a) => aList.appendChild(createEl("li", "", a)));
                 aBlock.appendChild(aLabel);
                 aBlock.appendChild(aList);
@@ -672,7 +696,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             if (week.milestone_question) {
-                const mBox = createEl("div", "callout-example", `Milestone Check: ${week.milestone_question}`);
+                const mBox = createEl("div", "callout-example-card", `Milestone Check: ${week.milestone_question}`);
                 weekCard.appendChild(mBox);
             }
 
@@ -685,9 +709,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Capstone Final Project
         if (data.final_project) {
-            const projBlock = createEl("div", "content-block");
-            const pHeading = createEl("div", "block-heading", "Capstone Mini-Project");
-            const pBox = createEl("div", "callout-takeaway", data.final_project);
+            const projBlock = createEl("div", "content-section-block");
+            const pHeading = createEl("div", "section-label-header", "Capstone Mini-Project");
+            const pBox = createEl("div", "callout-takeaway-card", data.final_project);
             projBlock.appendChild(pHeading);
             projBlock.appendChild(pBox);
             stateContent.appendChild(projBlock);
@@ -695,11 +719,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Suggested Resource Topics
         if (data.suggested_resources && data.suggested_resources.length > 0) {
-            const resBlock = createEl("div", "content-block");
-            const rHeading = createEl("div", "block-heading", "Suggested Study Topics & Search Queries");
-            const tagsDiv = createEl("div", "resource-tags-cloud");
+            const resBlock = createEl("div", "content-section-block");
+            const rHeading = createEl("div", "section-label-header", "Suggested Study Topics & Search Queries");
+            const tagsDiv = createEl("div", "search-tags-cluster");
             data.suggested_resources.forEach((r) => {
-                tagsDiv.appendChild(createEl("span", "resource-tag", `🔍 ${r}`));
+                tagsDiv.appendChild(createEl("span", "search-tag-pill", `🔍 ${r}`));
             });
             resBlock.appendChild(rHeading);
             resBlock.appendChild(tagsDiv);
