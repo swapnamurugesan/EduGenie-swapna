@@ -73,15 +73,16 @@ body {
     font-family: var(--font-sans);
     background-color: var(--bg-backdrop);
     background-image: 
-        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(99, 102, 241, 0.18), transparent 70%),
-        radial-gradient(ellipse 60% 40% at 50% 120%, rgba(139, 92, 246, 0.12), transparent 70%);
+        radial-gradient(ellipse 90% 50% at 50% -20%, rgba(99, 102, 241, 0.15), transparent 70%),
+        radial-gradient(ellipse 70% 40% at 50% 120%, rgba(139, 92, 246, 0.10), transparent 70%);
     color: var(--text-body);
     line-height: 1.6;
     min-height: 100vh;
-    padding: 2rem 1.25rem;
+    margin: 0;
+    padding: 1rem 1.25rem;
     display: flex;
     justify-content: center;
-    align-items: flex-start;
+    align-items: stretch;
     -webkit-font-smoothing: antialiased;
 }
 
@@ -94,21 +95,25 @@ body {
 /* Ambient Stage Container */
 .stage-container {
     width: 100%;
-    max-width: 1260px;
+    max-width: 100%;
+    min-height: calc(100vh - 2rem);
     display: flex;
     justify-content: center;
+    align-items: stretch;
 }
 
 /* Floating White Canvas Stage */
 .main-canvas {
     width: 100%;
+    max-width: 100%;
     background-color: var(--bg-canvas);
-    border-radius: var(--radius-stage);
+    border-radius: var(--radius-lg);
     box-shadow: var(--shadow-canvas);
-    padding: 2.75rem 2.75rem 2.25rem 2.75rem;
+    padding: 1.75rem 2.25rem 1.5rem 2.25rem;
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    gap: 1.5rem;
+    flex: 1;
 }
 
 /* ==========================================================================
@@ -998,27 +1003,48 @@ textarea.field-input {
 }
 
 /* ==========================================================================
-   Responsive Adaptations
+   Responsive Adaptations (Edge-to-Edge Screen Fitting)
    ========================================================================== */
-@media (max-width: 960px) {
+@media (max-width: 1100px) {
     .workspace-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(300px, 380px) 1fr;
+        gap: 1.25rem;
+    }
+}
+
+@media (max-width: 900px) {
+    body {
+        padding: 0.5rem;
+    }
+    .stage-container {
+        min-height: 100vh;
     }
     .main-canvas {
-        padding: 1.75rem 1.25rem;
+        border-radius: var(--radius-md);
+        padding: 1.5rem 1.25rem;
+    }
+    .workspace-grid {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
     }
     .hero-main-title {
         font-size: 1.85rem;
     }
 }
 
-@media (max-width: 580px) {
+@media (max-width: 600px) {
     body {
-        padding: 0.75rem 0.5rem;
+        padding: 0;
+        background-image: none;
+    }
+    .stage-container {
+        min-height: 100vh;
     }
     .main-canvas {
-        border-radius: 24px;
-        padding: 1.25rem;
+        border-radius: 0;
+        border: none;
+        padding: 1.25rem 1rem;
+        box-shadow: none;
     }
     .metrics-tri-grid {
         grid-template-columns: 1fr;
