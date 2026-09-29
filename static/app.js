@@ -88,10 +88,8 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     // DOM Elements
-    const toolTabs = document.querySelectorAll(".tool-carousel-nav .tool-tab");
-    const carouselDots = document.querySelectorAll(".carousel-dots-row .c-dot");
+    const toolNavButtons = document.querySelectorAll(".tool-nav-btn");
 
-    const heroTagText = document.getElementById("hero-tag-text");
     const activeToolTitle = document.getElementById("active-tool-title");
     const activeToolDesc = document.getElementById("active-tool-desc");
 
@@ -156,22 +154,16 @@ document.addEventListener("DOMContentLoaded", () => {
         activeFeature = feature;
         const meta = TOOL_META[feature] || TOOL_META.qa;
 
-        // Update Showcase Titles
-        if (heroTagText) heroTagText.textContent = meta.tag;
-        activeToolTitle.textContent = meta.title;
-        activeToolDesc.textContent = meta.desc;
-        btnSubmitText.textContent = meta.submitLabel;
+        // Update Titles
+        if (activeToolTitle) activeToolTitle.textContent = meta.title;
+        if (activeToolDesc) activeToolDesc.textContent = meta.desc;
+        if (btnSubmitText) btnSubmitText.textContent = meta.submitLabel;
 
-        // Update Carousel Tool Tabs
-        toolTabs.forEach((tab) => {
-            const isActive = tab.getAttribute("data-feature") === feature;
-            tab.classList.toggle("active", isActive);
-            tab.setAttribute("aria-selected", isActive ? "true" : "false");
-        });
-
-        // Update Iridescent Pagination Dots
-        carouselDots.forEach((dot, idx) => {
-            dot.classList.toggle("active", idx === meta.index);
+        // Update Nav Buttons
+        toolNavButtons.forEach((btn) => {
+            const isActive = btn.getAttribute("data-feature") === feature;
+            btn.classList.toggle("active", isActive);
+            btn.setAttribute("aria-selected", isActive ? "true" : "false");
         });
 
         // Toggle Form Sections
@@ -192,9 +184,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    toolTabs.forEach((tab) => {
-        tab.addEventListener("click", () => {
-            const feature = tab.getAttribute("data-feature");
+    toolNavButtons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+            const feature = btn.getAttribute("data-feature");
             switchFeature(feature);
         });
     });
