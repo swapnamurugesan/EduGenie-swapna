@@ -280,3 +280,5 @@ When presenting EduGenie during a project review, follow this 5-step demonstrati
 2. **AI Verification**: AI-generated responses, while strictly validated, are educational recommendations and should be verified against primary course materials.
 3. **API Quota & Costs**: Google Gemini API usage is subject to Google Cloud's rate limits and quota tiers. A free tier is available via Google AI Studio.
 4. **Local Model Hardware**: Running `MBZUAI/LaMini-Flan-T5-783M` locally requires ~3 GB of free RAM and initial internet access to download model weights (~3.1 GB).
+#   E d u G e n i e - s w a p n a  
+ 
