@@ -13,6 +13,10 @@ class Settings(BaseSettings):
         extra="ignore",
     )
 
+    # Server Deployment Settings
+    HOST: str = Field(default="0.0.0.0", description="Host to bind server")
+    PORT: int = Field(default=8000, description="Port to listen on")
+
     # Gemini Cloud Settings
     GEMINI_API_KEY: str = Field(default="", description="Google Gemini API key")
     GEMINI_MODEL: str = Field(default="gemini-3.1-flash-lite", description="Gemini model identifier")

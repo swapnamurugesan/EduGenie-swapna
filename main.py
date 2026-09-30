@@ -243,3 +243,11 @@ async def api_summarize(request: SummarizeRequest):
 async def api_learning_path(request: LearningPathRequest):
     """Generate structured, realistic week-by-week educational curricula."""
     return generate_learning_path(request)
+
+
+if __name__ == "__main__":
+    import os
+    import uvicorn
+
+    port = int(os.environ.get("PORT", settings.PORT))
+    uvicorn.run("main:app", host=settings.HOST, port=port, reload=False)
