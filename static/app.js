@@ -35,9 +35,9 @@ document.addEventListener("DOMContentLoaded", () => {
             tag: "003 • PRACTICE QUIZ",
             title: "Practice Quiz",
             desc: "Check what you know.",
-            submitLabel: "Generate 3 Questions",
+            submitLabel: "Generate Practice Quiz",
             loadingTitle: "Generating practice questions...",
-            loadingSubtitle: "Creating 3 multiple-choice questions with answer keys.",
+            loadingSubtitle: "Creating multiple-choice questions with answer keys.",
         },
         summarize: {
             index: 3,
@@ -72,6 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
         quiz: {
             topic: "Photosynthesis and cellular respiration in plant biology",
             difficulty: "intermediate",
+            num_questions: "3",
         },
         summarize: {
             passage: "Plate tectonics is the scientific theory explaining the movement of the Earth's lithosphere, which is divided into several major and minor plates. These plates move relative to one another over the underlying asthenosphere. The interactions along plate boundaries are responsible for major geological events, including earthquakes, volcanic activity, mountain building, and oceanic trench formation. Divergent boundaries occur where plates pull apart, creating new crust as magma rises from the mantle. Convergent boundaries form when plates collide, often forcing one plate beneath another in a process called subduction. Transform boundaries involve plates sliding past one another horizontally, such as the San Andreas Fault in California. Understanding plate tectonics is fundamental to modern geology, volcanology, and seismology.",
@@ -208,6 +209,9 @@ document.addEventListener("DOMContentLoaded", () => {
         } else if (activeFeature === "quiz") {
             document.getElementById("quiz-topic").value = example.topic;
             document.getElementById("quiz-difficulty").value = example.difficulty;
+            if (example.num_questions && document.getElementById("quiz-num-questions")) {
+                document.getElementById("quiz-num-questions").value = example.num_questions;
+            }
         } else if (activeFeature === "summarize") {
             document.getElementById("summarize-passage").value = example.passage;
             document.getElementById("summarize-length").value = example.length;
@@ -282,12 +286,14 @@ document.addEventListener("DOMContentLoaded", () => {
         } else if (activeFeature === "quiz") {
             const topic_or_passage = document.getElementById("quiz-topic").value.trim();
             const difficulty = document.getElementById("quiz-difficulty").value;
+            const numQuestionsEl = document.getElementById("quiz-num-questions");
+            const num_questions = numQuestionsEl ? (parseInt(numQuestionsEl.value, 10) || 3) : 3;
             if (!topic_or_passage) {
                 showError("Missing Input", "Please enter a topic or text passage to generate a quiz.");
                 return;
             }
             endpoint = "/quiz";
-            payload = { topic_or_passage, difficulty };
+            payload = { topic_or_passage, difficulty, num_questions };
         } else if (activeFeature === "summarize") {
             const passage = document.getElementById("summarize-passage").value.trim();
             const length = document.getElementById("summarize-length").value;
@@ -463,23 +469,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function renderQuizResult(data) {
         const wrapper = createEl("div", "quiz-flow-wrapper");
+        const totalQ = data.questions ? data.questions.length : (data.num_questions || 3);
 
         const topRow = createEl("div", "content-top-row");
         const title = createEl("h3", "content-title-h3", `Quiz: ${data.topic_or_passage.slice(0, 48)}...`);
-        const badge = createEl("span", "stat-pill-badge", `${capitalize(data.difficulty)} • 3 Questions`);
+        const badge = createEl("span", "stat-pill-badge", `${capitalize(data.difficulty)} • ${totalQ} Questions`);
         topRow.appendChild(title);
         topRow.appendChild(badge);
         wrapper.appendChild(topRow);
 
-        // 3-Column Stats Grid Banner for Quiz (Hidden until submission)
+        // Stats Grid Banner for Quiz (Hidden until submission)
         const scoreBanner = createEl("div", "metrics-tri-grid hidden", "", "quiz-score-tri-grid");
         wrapper.appendChild(scoreBanner);
 
-        // 3 Separate Question Cards
+        // Separate Question Cards
         data.questions.forEach((q, qIndex) => {
             const card = createEl("div", "quiz-card-item", "", `quiz-card-item-${qIndex}`);
 
-            const indicator = createEl("span", "quiz-q-indicator-text", `Question ${qIndex + 1} of 3`);
+            const indicator = createEl("span", "quiz-q-indicator-text", `Question ${qIndex + 1} of ${totalQ}`);
             const prompt = createEl("h4", "quiz-q-heading", q.question);
             card.appendChild(indicator);
             card.appendChild(prompt);
@@ -525,8 +532,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function handleQuizScoring(data) {
+        const totalQ = data.questions.length;
         const answers = [];
-        for (let i = 0; i < 3; i++) {
+        for (let i = 0; i < totalQ; i++) {
             const selected = document.querySelector(`input[name="quiz-q-${i}"]:checked`);
             if (!selected) {
                 showToast(`Please answer Question ${i + 1} before submitting.`);
@@ -564,14 +572,14 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
 
-        // Update 3-Column Metrics Grid for Quiz
+        // Update Metrics Grid for Quiz
         const scoreBanner = document.getElementById("quiz-score-tri-grid");
         if (scoreBanner) {
             scoreBanner.classList.remove("hidden");
-            const pct = Math.round((score / 3) * 100);
+            const pct = Math.round((score / totalQ) * 100);
             scoreBanner.innerHTML = `
                 <div class="metric-column">
-                    <span class="metric-large-val">${score} / 3</span>
+                    <span class="metric-large-val">${score} / ${totalQ}</span>
                     <span class="metric-label-txt">FINAL SCORE</span>
                 </div>
                 <div class="metric-column">
@@ -579,7 +587,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <span class="metric-label-txt">ACCURACY RATE</span>
                 </div>
                 <div class="metric-column">
-                    <span class="metric-large-val">3 of 3</span>
+                    <span class="metric-large-val">${totalQ} of ${totalQ}</span>
                     <span class="metric-label-txt">QUESTIONS ANSWERED</span>
                 </div>
             `;

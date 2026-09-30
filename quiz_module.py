@@ -12,16 +12,17 @@ logger = logging.getLogger("edugenie.quiz")
 class _RawQuizOutput(BaseModel):
     questions: List[QuizQuestion] = Field(
         ...,
-        description="Exactly 3 multiple choice questions with 4 distinct options each, 0-indexed correct answer, and explanation."
+        description="Multiple choice questions with 4 distinct options each, 0-indexed correct answer, and explanation."
     )
 
 
 def generate_quiz(request: QuizRequest) -> QuizResponse:
-    """Generate exactly 3 validated multiple-choice questions with bounded repair."""
+    """Generate requested number of validated multiple-choice questions with bounded repair."""
+    count = request.num_questions
     system_instruction = (
         "You are EduGenie's quiz generation engine. Generate high-quality multiple choice quizzes for students.\n"
         "Strict Requirements:\n"
-        "1. Produce EXACTLY 3 questions.\n"
+        f"1. Produce EXACTLY {count} questions.\n"
         "2. Each question MUST have EXACTLY 4 distinct, plausible options (options array of length 4).\n"
         "3. correct_option_index MUST be an integer between 0 and 3 referring to the 0-based index of the correct option.\n"
         "4. Include a clear, informative explanation for why the chosen option is correct.\n"
@@ -31,7 +32,7 @@ def generate_quiz(request: QuizRequest) -> QuizResponse:
     base_prompt = (
         f"Difficulty: {request.difficulty}\n"
         f"Topic / Passage: {request.topic_or_passage}\n\n"
-        f"Generate exactly 3 multiple choice questions following all schema requirements."
+        f"Generate exactly {count} multiple choice questions following all schema requirements."
     )
 
     # Attempt 1: Standard structured generation
@@ -43,7 +44,7 @@ def generate_quiz(request: QuizRequest) -> QuizResponse:
         if attempt > 1:
             prompt += (
                 f"\n\nCRITICAL FIX NEEDED: The previous attempt failed validation with error: {last_error}. "
-                f"Ensure exactly 3 questions, exactly 4 unique options per question, and correct_option_index in [0, 1, 2, 3]."
+                f"Ensure exactly {count} questions, exactly 4 unique options per question, and correct_option_index in [0, 1, 2, 3]."
             )
 
         try:
@@ -52,12 +53,12 @@ def generate_quiz(request: QuizRequest) -> QuizResponse:
                 schema=_RawQuizOutput,
                 system_instruction=system_instruction,
                 temperature=0.3 if attempt == 1 else 0.1,
-                max_output_tokens=2000,
+                max_output_tokens=max(2000, count * 500),
             )
 
             # Strict validation
-            if len(raw_output.questions) != 3:
-                raise ValueError(f"Expected exactly 3 questions, got {len(raw_output.questions)}.")
+            if len(raw_output.questions) != count:
+                raise ValueError(f"Expected exactly {count} questions, got {len(raw_output.questions)}.")
 
             for i, q in enumerate(raw_output.questions):
                 if len(q.options) != 4:
@@ -70,6 +71,7 @@ def generate_quiz(request: QuizRequest) -> QuizResponse:
             return QuizResponse(
                 topic_or_passage=request.topic_or_passage,
                 difficulty=request.difficulty,
+                num_questions=count,
                 questions=raw_output.questions,
             )
 
@@ -81,7 +83,7 @@ def generate_quiz(request: QuizRequest) -> QuizResponse:
                 if isinstance(err, AIProviderError):
                     raise
                 raise AIProviderError(
-                    message="Failed to generate a valid 3-question quiz after repair attempt.",
+                    message=f"Failed to generate a valid {count}-question quiz after repair attempt.",
                     code="QUIZ_VALIDATION_FAILED",
                     status_code=502,
                     details=last_error

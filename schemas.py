@@ -119,6 +119,13 @@ class QuizRequest(BaseModel):
         default="intermediate",
         description="Quiz difficulty level"
     )
+    num_questions: int = Field(
+        default=3,
+        ge=1,
+        le=10,
+        description="Configurable number of questions to generate (1 to 10)",
+        examples=[3, 5, 10]
+    )
 
     @field_validator("topic_or_passage")
     @classmethod
@@ -132,18 +139,19 @@ class QuizRequest(BaseModel):
 class QuizResponse(BaseModel):
     topic_or_passage: str
     difficulty: str
+    num_questions: int = Field(default=3, description="Total number of questions in this quiz set")
     questions: List[QuizQuestion] = Field(
         ...,
-        min_length=3,
-        max_length=3,
-        description="Exactly 3 validated multiple choice questions"
+        min_length=1,
+        max_length=10,
+        description="Validated multiple choice questions"
     )
 
     @field_validator("questions")
     @classmethod
-    def validate_exactly_three(cls, v: List[QuizQuestion]) -> List[QuizQuestion]:
-        if len(v) != 3:
-            raise ValueError("Quiz must contain exactly 3 questions.")
+    def validate_questions_list(cls, v: List[QuizQuestion]) -> List[QuizQuestion]:
+        if not v:
+            raise ValueError("Quiz must contain at least 1 question.")
         return v
 
 

@@ -98,3 +98,35 @@ def test_quiz_repair_retry_on_invalid_initial_output(client: TestClient, monkeyp
     data = response.json()
     assert len(data["questions"]) == 3
     assert mock_generate.call_count == 2
+
+
+def test_quiz_generation_configurable_question_count(client: TestClient, monkeypatch):
+    """Test generating a user-configured number of questions (e.g. 5 questions)."""
+    mock_questions = [
+        QuizQuestion(
+            question=f"Sample Question {i}?",
+            options=[f"Option {i}-A", f"Option {i}-B", f"Option {i}-C", f"Option {i}-D"],
+            correct_option_index=i % 4,
+            explanation=f"Explanation for question {i}"
+        )
+        for i in range(1, 6)
+    ]
+    mock_output = _RawQuizOutput(questions=mock_questions)
+    monkeypatch.setattr(gemini_client, "generate_structured", MagicMock(return_value=mock_output))
+
+    response = client.post(
+        "/quiz",
+        json={
+            "topic_or_passage": "Computer Science Algorithms",
+            "difficulty": "advanced",
+            "num_questions": 5
+        }
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["num_questions"] == 5
+    assert len(data["questions"]) == 5
+    for q in data["questions"]:
+        assert len(q["options"]) == 4
+        assert len(set(q["options"])) == 4
+

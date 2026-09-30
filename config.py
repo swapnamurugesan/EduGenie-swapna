@@ -15,7 +15,7 @@ class Settings(BaseSettings):
 
     # Gemini Cloud Settings
     GEMINI_API_KEY: str = Field(default="", description="Google Gemini API key")
-    GEMINI_MODEL: str = Field(default="gemini-2.5-flash", description="Gemini model identifier")
+    GEMINI_MODEL: str = Field(default="gemini-3.1-flash-lite", description="Gemini model identifier")
     REQUEST_TIMEOUT_SECONDS: float = Field(default=30.0, description="Timeout for API requests")
 
     # Explanation Provider Settings
